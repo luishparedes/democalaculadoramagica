@@ -5,110 +5,441 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Demo Calculadora Mágica</title>
     <style>
+        /* Estilos generales */
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+            margin: 0;
             padding: 20px;
+            min-height: 100vh;
+        }
+
+        .calculator {
+            border: 2px solid #ccc;
+            padding: 25px;
+            border-radius: 15px;
+            background-color: #fff;
+            width: 100%;
+            max-width: 420px;
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .calculator:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        h2, h3 {
+            margin-bottom: 15px;
+            color: #00796b;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+        }
+
+        input[type="number"], input[type="text"], select {
+            margin: 12px 0;
+            padding: 12px;
+            width: 90%;
+            box-sizing: border-box;
+            border-radius: 8px;
+            border: 1px solid #b2dfdb;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        input[type="number"]:focus, 
+        input[type="text"]:focus, 
+        select:focus {
+            outline: none;
+            border-color: #26c6da;
+            box-shadow: 0 0 0 3px rgba(38, 198, 218, 0.2);
+        }
+
+        button {
+            margin: 12px 0;
+            padding: 12px;
+            width: 90%;
+            box-sizing: border-box;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .main-button {
+            background: linear-gradient(to right, #29b6f6, #26c6da);
+            color: white;
+        }
+
+        .main-button:hover {
+            background: linear-gradient(to right, #0288d1, #00acc1);
+        }
+
+        p {
+            margin: 12px 0;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        /* Lista de productos */
+        #listaProductos {
+            width: 100%;
+            max-width: 840px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        #listaProductos table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        #listaProductos th, #listaProductos td {
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            text-align: left;
+        }
+
+        #listaProductos th {
+            background: linear-gradient(to right, #26c6da, #00acc1);
+            color: white;
+            font-weight: 600;
+        }
+
+        #listaProductos tr:nth-child(even) {
             background-color: #f5f5f5;
         }
-        
-        .calculator, #listaProductos {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+
+        #listaProductos tr:hover {
+            background-color: #e0f7fa;
         }
-        
-        h2, h3 {
-            color: #333;
-        }
-        
-        input, select, button {
+
+        /* Botones especiales */
+        #listaProductos button {
             padding: 8px 12px;
-            margin: 5px 0;
-            border: 1px solid #ddd;
+            width: auto;
+            margin: 0 5px;
+            font-size: 0.9rem;
+        }
+
+        #listaProductos button.editar {
+            background: linear-gradient(to right, #4CAF50, #66BB6A);
+        }
+
+        #listaProductos button.editar:hover {
+            background: linear-gradient(to right, #43A047, #5CB85C);
+        }
+
+        #listaProductos button.eliminar {
+            background: linear-gradient(to right, #f44336, #ef5350);
+        }
+
+        #listaProductos button.eliminar:hover {
+            background: linear-gradient(to right, #d32f2f, #e53935);
+        }
+
+        #listaProductos button.imprimir {
+            background: linear-gradient(to right, #FF9800, #FFA726);
+        }
+
+        #listaProductos button.imprimir:hover {
+            background: linear-gradient(to right, #F57C00, #FB8C00);
+        }
+
+        #listaProductos button.limpiar-lista {
+            background: linear-gradient(to right, #f44336, #ef5350);
+            margin-top: 15px;
+        }
+
+        #listaProductos button.limpiar-lista:hover {
+            background: linear-gradient(to right, #d32f2f, #e53935);
+        }
+
+        #listaProductos button.generar-pdf {
+            background: linear-gradient(to right, #008CBA, #00bcd4);
+            margin-top: 15px;
+        }
+
+        #listaProductos button.generar-pdf:hover {
+            background: linear-gradient(to right, #007bb5, #00acc1);
+        }
+
+        #listaProductos button.lista-costos {
+            background: linear-gradient(to right, #9c27b0, #ab47bc);
+            margin-top: 15px;
+        }
+
+        #listaProductos button.lista-costos:hover {
+            background: linear-gradient(to right, #7b1fa2, #8e24aa);
+        }
+
+        #listaProductos button.generar-respaldo {
+            background: linear-gradient(to right, #607d8b, #78909c);
+            margin-top: 15px;
+        }
+
+        #listaProductos button.generar-respaldo:hover {
+            background: linear-gradient(to right, #455a64, #546e7a);
+        }
+
+        /* Estilos para el inventario */
+        .inventario-bajo {
+            color: #f44336;
+            font-weight: bold;
+            background-color: #ffebee;
+            padding: 2px 5px;
             border-radius: 4px;
         }
+
+        .ajuste-inventario {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .ajuste-inventario button {
+            padding: 5px 10px;
+            min-width: 30px;
+            margin: 0;
+            font-size: 0.8rem;
+        }
+
+        /* Toast de notificaciones */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 16px 32px;
+            border-radius: 8px;
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+            color: white;
+            font-weight: bold;
+            background: linear-gradient(to right, #4CAF50, #66BB6A);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.error {
+            background: linear-gradient(to right, #f44336, #ef5350);
+        }
+
+        .toast.warning {
+            background: linear-gradient(to right, #FF9800, #FFA726);
+        }
+
+        @keyframes fadeIn {
+            from { 
+                opacity: 0;
+                bottom: 0;
+            }
+            to { 
+                opacity: 1;
+                bottom: 30px;
+            }
+        }
+
+        /* Copyright notice */
+        .copyright-notice {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #f8f9fa;
+            border-left: 5px solid #dc3545;
+            padding: 15px;
+            max-width: 300px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: slideIn 0.5s ease-out;
+            display: none;
+        }
         
-        button {
-            background-color: #4CAF50;
+        .copyright-notice.show {
+            display: block;
+        }
+        
+        .copyright-notice .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        
+        .copyright-notice strong {
+            color: #dc3545;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .copyright-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #dc3545;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 999;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* Botones flotantes */
+        .floating-nav {
+            position: fixed;
+            right: 20px;
+            bottom: 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 998;
+        }
+
+        .floating-nav button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(to bottom, #26c6da, #00acc1);
             color: white;
             border: none;
             cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        button:hover {
-            background-color: #45a049;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        
-        th {
-            background-color: #f2f2f2;
-        }
-        
-        .inventario-bajo {
-            color: red;
-            font-weight: bold;
-        }
-        
-        .action-buttons {
-            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
         }
-        
-        .action-buttons button {
-            padding: 10px 15px;
+
+        .floating-nav button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
         }
-        
-        .limpiar-lista {
-            background-color: #f44336;
+
+        .floating-nav button:active {
+            transform: scale(0.95);
         }
-        
-        .limpiar-lista:hover {
-            background-color: #d32f2f;
+
+        /* Botón para ir arriba */
+        .go-top {
+            background: linear-gradient(to bottom, #4CAF50, #66BB6A) !important;
         }
-        
-        #listaCostosContainer {
-            margin-top: 20px;
+
+        /* Botón para ir abajo */
+        .go-bottom {
+            background: linear-gradient(to bottom, #607d8b, #78909c) !important;
+        }
+
+        /* Demo restrictions */
+        .demo-restriction {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
             padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin: 20px 0;
+            border-radius: 5px;
         }
         
-        #listaCostos {
-            list-style-type: none;
-            padding: 0;
+        .demo-restriction h4 {
+            margin-top: 0;
+            color: #856404;
         }
         
-        #listaCostos li {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
+        .upgrade-button {
+            background: linear-gradient(to right, #28a745, #218838);
+            color: white;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        .upgrade-button:hover {
+            background: linear-gradient(to right, #218838, #1e7e34);
         }
     </style>
 </head>
 <body>
+    <div class="copyright-icon" onclick="toggleCopyrightNotice()">©</div>
+    
+    <div class="copyright-notice" id="copyrightNotice">
+        <button class="close-btn" onclick="toggleCopyrightNotice()">×</button>
+        <strong>ADVERTENCIA:</strong> Este sistema está protegido por derechos de autor. 
+        <strong>No revendas tu código de acceso</strong> o será bloqueado y perderás tu dinero. 
+        Cualquier uso no autorizado será penalizado según las leyes aplicables.
+    </div>
+
     <div class="calculator">
         <h2>Calculadora Mágica - DEMO</h2>
         
+        <div class="demo-restriction">
+            <h4>Versión DEMO Limitada</h4>
+            <p>Esta versión demo permite probar las funciones básicas. Para acceder a todas las características:</p>
+            <a href="#contacto" class="upgrade-button">¡Actualiza a la versión completa!</a>
+        </div>
+        
+        <section>
+            <h3>Nombre del Establecimiento</h3>
+            <input type="text" id="nombreEstablecimiento" placeholder="Ej: Tienda La Bendición">
+            <button onclick="guardarNombreEstablecimiento()">Guardar Nombre</button>
+        </section>
+
+        <section>
+            <h3>Tasa BCV</h3>
+            <input type="number" id="tasaBCV" placeholder="Tasa BCV" value="36" required>
+            <button onclick="actualizarTasaBCV()">Actualizar Tasa BCV</button>
+        </section>
+
         <section>
             <h3>Datos del Producto</h3>
             <input type="text" id="producto" placeholder="Nombre del producto" required>
@@ -118,19 +449,21 @@
                 <option value="viveres">Víveres</option>
                 <option value="gaseosas">Gaseosas</option>
                 <option value="licores">Licores</option>
+                <option value="enlatados">Enlatados</option>
                 <option value="otros">Otros</option>
             </select>
         </section>
 
         <section>
             <h3>Precio de Venta</h3>
-            <input type="number" id="ganancia" placeholder="% de ganancia (ej: 30)" value="30" required>
+            <input type="number" id="ganancia" placeholder="Porcentaje de ganancia" value="30" required>
+            <input type="number" id="unidadesPorCaja" placeholder="Unidades por caja" value="12" required>
             <input type="number" id="unidadesExistentes" placeholder="Unidades existentes" value="10" required>
-            <button onclick="calcularPrecioVenta()">Calcular Precio</button>
-            <p id="precioUnitario">Precio unitario: $0.00</p>
+            <button onclick="calcularPrecioVenta()">Calcular Precio de Venta</button>
+            <p id="precioUnitario">Precio unitario: </p>
         </section>
 
-        <button onclick="guardarProducto()">Guardar Producto</button>
+        <button onclick="guardarProducto()" class="main-button">Guardar Producto</button>
     </div>
 
     <div id="listaProductos">
@@ -143,7 +476,9 @@
                     <th>Producto</th>
                     <th>Descripción</th>
                     <th>Existencias</th>
+                    <th>Ajustar Inventario</th>
                     <th>Precio Unitario ($)</th>
+                    <th>Precio Unitario (Bs)</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -151,145 +486,406 @@
         </table>
 
         <div class="action-buttons">
+            <button onclick="mostrarListaCostos()" class="lista-costos">Mostrar Lista de Costos</button>
             <button onclick="limpiarLista()" class="limpiar-lista">Limpiar Lista</button>
+        </div>
+
+        <div id="listaCostosContainer" style="display: none;">
+            <div class="costos-header">
+                <h3>Lista de Costos de Productos</h3>
+            </div>
+            <ul id="listaCostos"></ul>
         </div>
     </div>
 
+    <!-- Botones flotantes de navegación mejorados -->
+    <div class="floating-nav">
+        <button class="go-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+        <button class="go-bottom" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})">↓</button>
+    </div>
+
+    <!-- Sección de contacto/compra -->
+    <div id="contacto" class="calculator" style="margin-top: 30px; text-align: center;">
+        <h2>¿Quieres la versión completa?</h2>
+        <p>La versión completa incluye:</p>
+        <ul style="text-align: left; margin-left: 20px;">
+            <li>Generación de reportes en PDF</li>
+            <li>Respaldo completo de datos</li>
+            <li>Control de inventario avanzado</li>
+            <li>Registro de ventas diarias</li>
+            <li>Soporte técnico prioritario</li>
+            <li>Actualizaciones gratuitas</li>
+        </ul>
+        <p style="font-weight: bold; font-size: 1.2rem; margin-top: 20px;">Precio especial: $XX.XX</p>
+        <button style="background: linear-gradient(to right, #ff5722, #f4511e); padding: 15px 30px; font-size: 1.2rem;">
+            ¡Comprar ahora!
+        </button>
+    </div>
+
     <script>
-        // Array para almacenar los productos
-        let productos = [];
-        
-        // Función para calcular el precio de venta
-        function calcularPrecioVenta() {
-            const costo = parseFloat(document.getElementById('costo').value);
-            const ganancia = parseFloat(document.getElementById('ganancia').value);
+        // Datos persistentes
+        let productos = JSON.parse(localStorage.getItem('productos')) || [];
+        let nombreEstablecimiento = localStorage.getItem('nombreEstablecimiento') || '';
+        let tasaBCVGuardada = parseFloat(localStorage.getItem('tasaBCV')) || 36;
+
+        // Cargar datos al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarDatosIniciales();
+            actualizarLista();
             
-            if (isNaN(costo) {
-                alert('Por favor ingresa un costo válido');
-                return;
-            }
-            
-            const precioVenta = costo * (1 + (ganancia / 100));
-            document.getElementById('precioUnitario').textContent = `Precio unitario: $${precioVenta.toFixed(2)}`;
+            // Mostrar aviso de copyright después de 5 segundos
+            setTimeout(() => {
+                toggleCopyrightNotice();
+                setTimeout(() => {
+                    const notice = document.getElementById('copyrightNotice');
+                    if (notice.classList.contains('show')) {
+                        notice.classList.remove('show');
+                    }
+                }, 15000);
+            }, 5000);
+        });
+
+        function toggleCopyrightNotice() {
+            const notice = document.getElementById('copyrightNotice');
+            notice.classList.toggle('show');
         }
-        
-        // Función para guardar un producto
-        function guardarProducto() {
-            const nombre = document.getElementById('producto').value;
+
+        function cargarDatosIniciales() {
+            document.getElementById('nombreEstablecimiento').value = nombreEstablecimiento;
+            document.getElementById('tasaBCV').value = tasaBCVGuardada;
+        }
+
+        function calcularPrecioVenta() {
+            const tasaBCV = parseFloat(document.getElementById('tasaBCV').value) || tasaBCVGuardada;
             const costo = parseFloat(document.getElementById('costo').value);
-            const descripcion = document.getElementById('descripcion').value;
             const ganancia = parseFloat(document.getElementById('ganancia').value);
-            const existencias = parseInt(document.getElementById('unidadesExistentes').value);
-            
-            if (!nombre || isNaN(costo) || !descripcion || isNaN(ganancia) || isNaN(existencias)) {
-                alert('Por favor completa todos los campos correctamente');
-                return;
+            const unidadesPorCaja = parseFloat(document.getElementById('unidadesPorCaja').value);
+
+            if (!validarTasaBCV(tasaBCV)) return;
+            if (!validarCamposNumericos(costo, ganancia, unidadesPorCaja)) return;
+
+            const gananciaDecimal = ganancia / 100;
+            const precioDolar = costo / (1 - gananciaDecimal);
+            const precioBolivares = precioDolar * tasaBCV;
+            const precioUnitarioDolar = precioDolar / unidadesPorCaja;
+            const precioUnitarioBolivar = precioBolivares / unidadesPorCaja;
+
+            mostrarResultados(precioUnitarioDolar, precioUnitarioBolivar);
+        }
+
+        function guardarProducto() {
+            const nombre = document.getElementById('producto').value.trim();
+            const descripcion = document.getElementById('descripcion').value;
+            const costo = parseFloat(document.getElementById('costo').value);
+            const ganancia = parseFloat(document.getElementById('ganancia').value);
+            const unidadesPorCaja = parseFloat(document.getElementById('unidadesPorCaja').value);
+            const unidadesExistentes = parseFloat(document.getElementById('unidadesExistentes').value) || 0;
+            const tasaBCV = parseFloat(document.getElementById('tasaBCV').value) || tasaBCVGuardada;
+
+            if (!validarCamposTexto(nombre, descripcion)) return;
+            if (!validarTasaBCV(tasaBCV)) return;
+            if (!validarCamposNumericos(costo, ganancia, unidadesPorCaja)) return;
+
+            if (productoExiste(nombre)) {
+                if (!confirm(`"${nombre}" ya existe. ¿Deseas actualizarlo?`)) return;
+                const index = productos.findIndex(p => p.nombre.toLowerCase() === nombre.toLowerCase());
+                productos.splice(index, 1);
             }
-            
-            const precioVenta = costo * (1 + (ganancia / 100));
-            
-            const producto = {
-                id: Date.now(), // ID único basado en timestamp
+
+            const producto = calcularProducto(nombre, descripcion, costo, ganancia, unidadesPorCaja, tasaBCV, unidadesExistentes);
+            guardarProductoEnLista(producto);
+        }
+
+        function calcularProducto(nombre, descripcion, costo, ganancia, unidadesPorCaja, tasaBCV, unidadesExistentes = 0) {
+            const gananciaDecimal = ganancia / 100;
+            const precioDolar = costo / (1 - gananciaDecimal);
+            const precioBolivares = precioDolar * tasaBCV;
+
+            return {
                 nombre,
                 descripcion,
-                existencias,
                 costo,
-                precioVenta
+                ganancia: gananciaDecimal,
+                unidadesPorCaja,
+                unidadesExistentes: unidadesExistentes || 0,
+                precioMayorDolar: precioDolar,
+                precioMayorBolivar: precioBolivares,
+                precioUnitarioDolar: precioDolar / unidadesPorCaja,
+                precioUnitarioBolivar: precioBolivares / unidadesPorCaja,
+                fechaActualizacion: new Date().toISOString()
             };
-            
+        }
+
+        function guardarProductoEnLista(producto) {
             productos.push(producto);
-            actualizarTablaProductos();
+            localStorage.setItem('productos', JSON.stringify(productos));
+            actualizarLista();
+            reiniciarCalculadora();
+            mostrarToast("✔ Producto guardado exitosamente");
+        }
+
+        function actualizarLista() {
+            const tbody = document.getElementById('productosTableBody');
+            tbody.innerHTML = '';
+
+            const productosOrdenados = [...productos].sort((a, b) => a.nombre.localeCompare(b.nombre));
             
-            // Limpiar campos
+            productosOrdenados.forEach((producto, index) => {
+                const originalIndex = productos.findIndex(p => p.nombre === producto.nombre);
+                const inventarioBajo = producto.unidadesExistentes <= 5;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${producto.nombre}</td>
+                    <td>${producto.descripcion}</td>
+                    <td class="${inventarioBajo ? 'inventario-bajo' : ''}">${producto.unidadesExistentes}</td>
+                    <td>
+                        <div class="ajuste-inventario">
+                            <button onclick="ajustarInventario(${originalIndex}, 'sumar')">+</button>
+                            <button onclick="ajustarInventario(${originalIndex}, 'restar')">-</button>
+                        </div>
+                    </td>
+                    <td>$${producto.precioUnitarioDolar.toFixed(2)}</td>
+                    <td>Bs${producto.precioUnitarioBolivar.toFixed(2)}</td>
+                    <td>
+                        <button class="editar" onclick="editarProducto(${originalIndex})">Editar</button>
+                        <button class="eliminar" onclick="eliminarProducto(${originalIndex})">Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            if (document.getElementById('listaCostosContainer').style.display === 'block') {
+                actualizarListaCostos();
+            }
+        }
+
+        function mostrarResultados(precioUnitarioDolar, precioUnitarioBolivar) {
+            document.getElementById('precioUnitario').innerHTML = 
+                `<strong>Precio unitario:</strong> $${precioUnitarioDolar.toFixed(2)} / Bs${precioUnitarioBolivar.toFixed(2)}`;
+        }
+
+        function reiniciarCalculadora() {
             document.getElementById('producto').value = '';
             document.getElementById('costo').value = '';
-            document.getElementById('descripcion').value = '';
+            document.getElementById('descripcion').selectedIndex = 0;
             document.getElementById('unidadesExistentes').value = '10';
-            document.getElementById('precioUnitario').textContent = 'Precio unitario: $0.00';
-            
-            alert('Producto guardado correctamente');
         }
-        
-        // Función para actualizar la tabla de productos
-        function actualizarTablaProductos() {
-            const tbody = document.getElementById('productosTableBody');
-            tbody.innerHTML = '';
-            
-            productos.forEach(producto => {
-                const tr = document.createElement('tr');
-                
-                // Clase para inventario bajo
-                const inventarioClass = producto.existencias < 5 ? 'inventario-bajo' : '';
-                
-                tr.innerHTML = `
-                    <td>${producto.nombre}</td>
-                    <td>${producto.descripcion}</td>
-                    <td class="${inventarioClass}">${producto.existencias}</td>
-                    <td>$${producto.precioVenta.toFixed(2)}</td>
-                    <td>
-                        <button onclick="eliminarProducto(${producto.id})">Eliminar</button>
-                    </td>
-                `;
-                
-                tbody.appendChild(tr);
-            });
+
+        function validarTasaBCV(tasa) {
+            if (isNaN(tasa) || tasa <= 0) {
+                mostrarToast("⚠ Ingrese una tasa BCV válida (mayor a cero)", "error");
+                return false;
+            }
+            return true;
         }
-        
-        // Función para eliminar un producto
-        function eliminarProducto(id) {
-            if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
-                productos = productos.filter(producto => producto.id !== id);
-                actualizarTablaProductos();
+
+        function validarCamposNumericos(costo, ganancia, unidades) {
+            if (isNaN(costo) || costo <= 0 || isNaN(ganancia) || ganancia <= 0 || isNaN(unidades) || unidades <= 0) {
+                mostrarToast("⚠ Complete todos los campos con valores válidos (mayores a cero)", "error");
+                return false;
+            }
+            return true;
+        }
+
+        function validarCamposTexto(nombre, descripcion) {
+            if (!nombre || !descripcion) {
+                mostrarToast("⚠ Complete todos los campos", "error");
+                return false;
+            }
+            return true;
+        }
+
+        function productoExiste(nombre) {
+            return productos.some(p => p.nombre.toLowerCase() === nombre.toLowerCase());
+        }
+
+        function mostrarToast(mensaje, tipo = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${tipo}`;
+            toast.textContent = mensaje;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function ajustarInventario(index, operacion) {
+            const producto = productos[index];
+            
+            const cantidad = parseInt(prompt(`Ingrese la cantidad a ${operacion === 'sumar' ? 'sumar' : 'restar'}:`, "1")) || 0;
+            
+            if (cantidad <= 0) {
+                mostrarToast("⚠ Ingrese una cantidad válida", "error");
+                return;
+            }
+
+            if (operacion === 'restar') {
+                if (producto.unidadesExistentes < cantidad) {
+                    mostrarToast("⚠ No hay suficientes unidades en inventario", "error");
+                    return;
+                }
+                
+                mostrarToast(`✔ Venta registrada: ${cantidad} ${producto.nombre}`);
+            }
+
+            producto.unidadesExistentes = operacion === 'sumar' ? 
+                producto.unidadesExistentes + cantidad : 
+                producto.unidadesExistentes - cantidad;
+            
+            localStorage.setItem('productos', JSON.stringify(productos));
+            actualizarLista();
+        }
+
+        function editarProducto(index) {
+            const producto = productos[index];
+            
+            document.getElementById('producto').value = producto.nombre;
+            document.getElementById('descripcion').value = producto.descripcion;
+            document.getElementById('costo').value = producto.costo;
+            document.getElementById('ganancia').value = producto.ganancia * 100;
+            document.getElementById('unidadesPorCaja').value = producto.unidadesPorCaja;
+            document.getElementById('unidadesExistentes').value = producto.unidadesExistentes;
+            
+            const tasaBCV = parseFloat(document.getElementById('tasaBCV').value) || tasaBCVGuardada;
+            const precioUnitarioDolar = producto.precioUnitarioDolar;
+            const precioUnitarioBolivar = precioUnitarioDolar * tasaBCV;
+            
+            mostrarResultados(precioUnitarioDolar, precioUnitarioBolivar);
+            
+            productos.splice(index, 1);
+            localStorage.setItem('productos', JSON.stringify(productos));
+            
+            mostrarToast(`✏ Editando producto: ${producto.nombre}`);
+        }
+
+        function eliminarProducto(index) {
+            const producto = productos[index];
+            if (confirm(`¿Estás seguro de eliminar "${producto.nombre}"?`)) {
+                productos.splice(index, 1);
+                localStorage.setItem('productos', JSON.stringify(productos));
+                actualizarLista();
+                mostrarToast(`❌ Producto eliminado: ${producto.nombre}`);
             }
         }
-        
-        // Función para buscar productos
+
         function buscarProducto() {
-            const termino = document.getElementById('buscar').value.toLowerCase();
-            
+            const termino = document.getElementById('buscar').value.trim().toLowerCase();
             if (!termino) {
-                actualizarTablaProductos();
+                actualizarLista();
                 return;
             }
-            
-            const productosFiltrados = productos.filter(producto => 
-                producto.nombre.toLowerCase().includes(termino) || 
-                producto.descripcion.toLowerCase().includes(termino)
+
+            const resultados = productos.filter(p => 
+                p.nombre.toLowerCase().includes(termino) || 
+                p.descripcion.toLowerCase().includes(termino)
             );
-            
+
             const tbody = document.getElementById('productosTableBody');
             tbody.innerHTML = '';
-            
-            productosFiltrados.forEach(producto => {
-                const tr = document.createElement('tr');
-                const inventarioClass = producto.existencias < 5 ? 'inventario-bajo' : '';
+
+            resultados.forEach((producto, index) => {
+                const originalIndex = productos.findIndex(p => p.nombre === producto.nombre);
+                const inventarioBajo = producto.unidadesExistentes <= 5;
                 
-                tr.innerHTML = `
+                const row = document.createElement('tr');
+                row.innerHTML = `
                     <td>${producto.nombre}</td>
                     <td>${producto.descripcion}</td>
-                    <td class="${inventarioClass}">${producto.existencias}</td>
-                    <td>$${producto.precioVenta.toFixed(2)}</td>
+                    <td class="${inventarioBajo ? 'inventario-bajo' : ''}">${producto.unidadesExistentes}</td>
                     <td>
-                        <button onclick="eliminarProducto(${producto.id})">Eliminar</button>
+                        <div class="ajuste-inventario">
+                            <button onclick="ajustarInventario(${originalIndex}, 'sumar')">+</button>
+                            <button onclick="ajustarInventario(${originalIndex}, 'restar')">-</button>
+                        </div>
+                    </td>
+                    <td>$${producto.precioUnitarioDolar.toFixed(2)}</td>
+                    <td>Bs${producto.precioUnitarioBolivar.toFixed(2)}</td>
+                    <td>
+                        <button class="editar" onclick="editarProducto(${originalIndex})">Editar</button>
+                        <button class="eliminar" onclick="eliminarProducto(${originalIndex})">Eliminar</button>
                     </td>
                 `;
-                
-                tbody.appendChild(tr);
+                tbody.appendChild(row);
             });
         }
-        
-        // Función para limpiar la lista de productos
+
         function limpiarLista() {
-            if (productos.length === 0) {
-                alert('No hay productos para limpiar');
+            if (confirm("⚠ ¿Estás seguro de limpiar toda la lista de productos? Esta acción no se puede deshacer.")) {
+                productos = [];
+                localStorage.setItem('productos', JSON.stringify(productos));
+                actualizarLista();
+                mostrarToast("❌ Todos los productos han sido eliminados");
+            }
+        }
+
+        function actualizarTasaBCV() {
+            const nuevaTasa = parseFloat(document.getElementById('tasaBCV').value);
+            
+            if (!validarTasaBCV(nuevaTasa)) return;
+
+            tasaBCVGuardada = nuevaTasa;
+            localStorage.setItem('tasaBCV', tasaBCVGuardada);
+            
+            if (productos.length > 0) {
+                actualizarPreciosConNuevaTasa(nuevaTasa);
+                actualizarLista();
+                mostrarToast(`✔ Tasa BCV actualizada a: ${nuevaTasa}\n${productos.length} productos recalculados.`);
+            } else {
+                mostrarToast("✔ Tasa BCV actualizada (no hay productos para recalcular)");
+            }
+        }
+
+        function actualizarPreciosConNuevaTasa(nuevaTasa) {
+            productos.forEach(producto => {
+                producto.precioMayorBolivar = producto.precioMayorDolar * nuevaTasa;
+                producto.precioUnitarioBolivar = producto.precioUnitarioDolar * nuevaTasa;
+            });
+            localStorage.setItem('productos', JSON.stringify(productos));
+        }
+
+        function guardarNombreEstablecimiento() {
+            nombreEstablecimiento = document.getElementById('nombreEstablecimiento').value.trim();
+            if (!nombreEstablecimiento) {
+                mostrarToast("⚠ Ingrese un nombre válido", "error");
                 return;
             }
+            localStorage.setItem('nombreEstablecimiento', nombreEstablecimiento);
+            mostrarToast(`✔ Nombre guardado: "${nombreEstablecimiento}"`);
+        }
+
+        function mostrarListaCostos() {
+            const container = document.getElementById('listaCostosContainer');
+            const lista = document.getElementById('listaCostos');
             
-            if (confirm('¿Estás seguro de que quieres limpiar toda la lista de productos? Esta acción no se puede deshacer.')) {
-                productos = [];
-                actualizarTablaProductos();
-                document.getElementById('buscar').value = '';
+            if (productos.length === 0) {
+                mostrarToast("⚠ No hay productos registrados", "warning");
+                container.style.display = 'none';
+                return;
             }
+
+            // Alternar la visibilidad
+            if (container.style.display === 'none' || container.style.display === '') {
+                container.style.display = 'block';
+                actualizarListaCostos();
+            } else {
+                container.style.display = 'none';
+            }
+        }
+
+        function actualizarListaCostos() {
+            const lista = document.getElementById('listaCostos');
+            lista.innerHTML = '';
+
+            // Ordenar por costo más alto
+            const productosOrdenados = [...productos].sort((a, b) => b.costo - a.costo);
+            
+            productosOrdenados.forEach(producto => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>${producto.nombre} (${producto.descripcion})</span>
+                    <span>$${producto.costo.toFixed(2)} / Bs${(producto.costo * tasaBCVGuardada).toFixed(2)}</span>
+                `;
+                lista.appendChild(li);
+            });
         }
     </script>
 </body>
