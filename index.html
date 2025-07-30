@@ -407,6 +407,17 @@
         .upgrade-button:hover {
             background: linear-gradient(to right, #218838, #1e7e34);
         }
+
+        /* Limitación de productos */
+        .product-limit {
+            background-color: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            color: #721c24;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -509,6 +520,7 @@
         <h2>¿Quieres la versión completa?</h2>
         <p>La versión completa incluye:</p>
         <ul style="text-align: left; margin-left: 20px;">
+            <li>Guardar productos ilimitados</li>
             <li>Generación de reportes en PDF</li>
             <li>Respaldo completo de datos</li>
             <li>Control de inventario avanzado</li>
@@ -517,7 +529,7 @@
             <li>Actualizaciones gratuitas</li>
         </ul>
         <p style="font-weight: bold; font-size: 1.2rem; margin-top: 20px;">Precio especial: $XX.XX</p>
-        <button style="background: linear-gradient(to right, #ff5722, #f4511e); padding: 15px 30px; font-size: 1.2rem;">
+        <button onclick="window.open('https://forms.gle/6r4N6V6giwsxmvJ37', '_blank')" style="background: linear-gradient(to right, #ff5722, #f4511e); padding: 15px 30px; font-size: 1.2rem;">
             ¡Comprar ahora!
         </button>
     </div>
@@ -527,6 +539,7 @@
         let productos = JSON.parse(localStorage.getItem('productos')) || [];
         let nombreEstablecimiento = localStorage.getItem('nombreEstablecimiento') || '';
         let tasaBCVGuardada = parseFloat(localStorage.getItem('tasaBCV')) || 36;
+        const MAX_PRODUCTOS_DEMO = 3; // Límite de productos en la versión demo
 
         // Cargar datos al iniciar
         document.addEventListener('DOMContentLoaded', function() {
@@ -574,6 +587,13 @@
         }
 
         function guardarProducto() {
+            // Verificar límite de productos en demo
+            if (productos.length >= MAX_PRODUCTOS_DEMO) {
+                mostrarToast(`⚠ Versión DEMO limitada a ${MAX_PRODUCTOS_DEMO} productos. Actualiza a la versión completa.`, "error");
+                document.getElementById('contacto').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+
             const nombre = document.getElementById('producto').value.trim();
             const descripcion = document.getElementById('descripcion').value;
             const costo = parseFloat(document.getElementById('costo').value);
@@ -622,6 +642,12 @@
             actualizarLista();
             reiniciarCalculadora();
             mostrarToast("✔ Producto guardado exitosamente");
+            
+            // Mostrar mensaje cuando se alcanza el límite
+            if (productos.length >= MAX_PRODUCTOS_DEMO) {
+                mostrarToast(`⚠ Has alcanzado el límite de ${MAX_PRODUCTOS_DEMO} productos en la versión DEMO`, "warning");
+                document.getElementById('contacto').scrollIntoView({ behavior: 'smooth' });
+            }
         }
 
         function actualizarLista() {
